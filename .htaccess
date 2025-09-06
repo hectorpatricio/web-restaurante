@@ -1,0 +1,10 @@
+Options All -Indexes
+
+RewriteEngine On
+
+# Si el archivo o directorio solicitado existe, no aplicar la regla de reescritura
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Regla de reescritura para URLs amigables con "_" incluido
+RewriteRule ^([-a-zA-Z0-9_]+)$ index.php?ruta=$1 [L,QSA]
