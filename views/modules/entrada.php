@@ -4,15 +4,37 @@
 
 $lista_colaboradores = ControladorPlatillos::ctrPlatillos(); 
 $lista_colaboradores_bebidas = ControladorBebidas::ctrBebidas(); 
+
+
+
+// echo "<pre>";
+// print_r($lista_obtener_datos);
+// echo "</pre>";
+
 $_SESSION['mesa'] = $_REQUEST["mesa"];
 
+date_default_timezone_set('America/Santiago');
+// Genera el valor solo la primera vez
+if (!isset($_SESSION['timestamp'])) {
+    $_SESSION['timestamp'] = date("HisdmY");
+}
 
+// Usas $_SESSION['timestamp'] en todas partes
+$codigoMesa=$_SESSION['timestamp'];
+
+
+$lista_obtener_datos = ControladorInformacion::ctrInformacion($codigoMesa) ?? [];
 
 if (isset($_POST['order_data']) && isset($_POST['total_price'])) 
 {
     $rut_usuario = $_SESSION["id_usuario"];
-    $lista_bebidas   =   ControladorOrden::ctrOrden($rut_usuario); 
+    $lista_bebidas   = ControladorOrden::ctrOrden($rut_usuario,$codigoMesa); 
+
+    // Redirige inmediatamente después de procesar
+    header("Location: index.php?ruta=entrada&mesa=" . urlencode($_SESSION['mesa']));
+    exit; 
 }
+
 
 
 ?>
@@ -20,6 +42,8 @@ if (isset($_POST['order_data']) && isset($_POST['total_price']))
         <div class="container-fluid">
 
             <div class="row">
+
+
                 <div class="col-md-8 card padding-y-sm card ">
                     <ul class="nav bg radius nav-pills nav-fill mb-3 bg" role="tablist" id="navMenu">
                         <li class="nav-item">
@@ -108,10 +132,6 @@ if (isset($_POST['order_data']) && isset($_POST['total_price']))
                             <?php } ?>
                         </div>
                     </span>
-
-
-
-           
                 </div>
 
                 <div class="col-md-4">
@@ -148,7 +168,41 @@ if (isset($_POST['order_data']) && isset($_POST['total_price']))
                             </div>
                         </span>
                     </div>
+
+                    <div class="card mt-3">
+                        <span id="cart2">
+                            <h3 class="text-primary" style="text-align: center;">Orden Generada</h3>
+          
+                            <div style="padding:20px; border:0px solid #ccc;">
+                                <table class="table table-bordered table-striped" style="border-radius:10px; overflow:hidden;">
+                                    <thead class="text-white" style="background-color:#007bff;">
+                                        <tr>
+                                            <th>Nombre Orden</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio (Unitario)</th>
+                                            <th>Precio Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($lista_obtener_datos as $key => $value) { ?>
+                                            <tr>
+                                                <td><?php echo $value['nombre_orden']; ?></td>
+                                                <td><?php echo $value['cantidad_orden']; ?></td>
+                                                <td><?php echo "$".$value['precio_orden']; ?></td>
+                                                <td><?php echo "$".$value['total_orden']; ?></td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </span>
+                    </div>
+
                 </div>
+
+
+
+
             </div>
         </div>
     </section>

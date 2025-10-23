@@ -72,7 +72,8 @@
                 $_GET["ruta"] == "conf_platos_principal" ||
                 $_GET["ruta"] == "conf_platos_editar" ||
                 $_GET["ruta"] == "conf_platos_crear" ||
-				$_GET["ruta"] == "salir"  
+				$_GET["ruta"] == "salir" ||
+                $_GET["ruta"] == "administrador"  
 			) {
 
 				include "modules/" . $_GET["ruta"] . ".php";
